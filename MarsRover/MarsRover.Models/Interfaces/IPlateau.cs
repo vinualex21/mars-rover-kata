@@ -8,5 +8,6 @@ namespace MarsRover.Models.Interfaces
 {
     public interface IPlateau
     {
+        public bool IsCoordinatesWithinBounds(int x, int y);
     }
 }

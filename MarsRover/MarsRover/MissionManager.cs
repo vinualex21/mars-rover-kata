@@ -1,4 +1,5 @@
 ﻿using MarsRover.Models;
+using MarsRover.Models.Plateaus;
 using MarsRover.Models.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace MarsRover
         /// <summary>
         /// Displays the main menu
         /// </summary>
-        public void PrintMenu()
+        public void PrintMainMenu()
         {
             Console.WriteLine("MENU");
             Console.WriteLine("1. Select plateau");
@@ -38,7 +39,7 @@ namespace MarsRover
         /// Executes the operation requestion by the user
         /// </summary>
         /// <param name="option">the chosen menu item</param>
-        public void ChooseMenuItem(char option)
+        public void ChooseMainMenuItem(char option)
         {
             Console.Clear();
             switch (option)
@@ -79,8 +80,8 @@ namespace MarsRover
         {
             var cardinalDirection = Utilities.Convert<CardinalPoint>(orientation.ToString());
             var coordinates = new Coordinate(x, y, cardinalDirection);
-            var explorer = new Rover(rovers.Count()+1, coordinates);
-            rovers.Add(explorer);
+            var rover = new Rover(rovers.Count()+1, coordinates, plateau);
+            rovers.Add(rover);
             
         }
 

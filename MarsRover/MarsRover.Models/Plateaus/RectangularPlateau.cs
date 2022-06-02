@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MarsRover.Models
+namespace MarsRover.Models.Plateaus
 {
     public class RectangularPlateau : IPlateau
     {
@@ -19,6 +19,9 @@ namespace MarsRover.Models
             Width = width;
         }
 
-        
+        public bool IsCoordinatesWithinBounds(int x, int y)
+        {
+            return x >= 0 && x <= Length && y >= 0 && y <= Width;
+        }
     }
 }

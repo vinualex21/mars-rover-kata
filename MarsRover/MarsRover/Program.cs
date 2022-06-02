@@ -6,8 +6,8 @@ ConsoleKeyInfo key;
 MissionManager mission = new MissionManager();
 do
 {
-    mission.PrintMenu();
+    mission.PrintMainMenu();
     key = Console.ReadKey();
-    mission.ChooseMenuItem(key.KeyChar);
+    mission.ChooseMainMenuItem(key.KeyChar);
 
 } while (key.Key != ConsoleKey.Escape);
