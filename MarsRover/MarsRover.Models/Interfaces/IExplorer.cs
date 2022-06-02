@@ -8,6 +8,7 @@ namespace MarsRover.Models.Interfaces
 {
     public interface IExplorer
     {
+        public int ID { get; set; }
         public string GetCurrentPosition();
 
     }

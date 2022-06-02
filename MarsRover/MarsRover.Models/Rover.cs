@@ -9,10 +9,12 @@ namespace MarsRover.Models
 {
     public class Rover : IExplorer
     {
-        private Coordinate Position { get; set; }
+        private Coordinate Position;
+        public int ID { get; set; }
 
-        public Rover(Coordinate position)
+        public Rover(int id, Coordinate position)
         {
+            ID = id;
             Position = position;
         }
 
@@ -62,7 +64,7 @@ namespace MarsRover.Models
                                 Position.X--;
                                 break;
                         }
-                        CheckRoverStatus();
+                        //CheckRoverStatus();
                         break;
 
                 }
