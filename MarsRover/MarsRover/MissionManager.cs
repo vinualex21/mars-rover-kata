@@ -27,7 +27,10 @@ namespace MarsRover
         public void PrintMainMenu()
         {
             Console.Clear();
-            Console.WriteLine($"MENU {Environment.NewLine}");
+            Console.WriteLine("**********************");
+            Console.WriteLine("Melody Mars Mission\n");
+            Console.WriteLine("**********************");
+            Console.WriteLine($"{Environment.NewLine}MENU {Environment.NewLine}");
             Console.WriteLine("1. Select plateau");
             Console.WriteLine("2. Deploy vehicle");
             Console.WriteLine("3. Move vehicle");
@@ -55,21 +58,38 @@ namespace MarsRover
             switch (option)
             {
                 case "1":
-                    PrintPlateauMenu();
-                    var plateauChoice = Console.ReadLine();
-                    ChoosePlateauMenuItem(plateauChoice);
+                    SetPlateau();
                     break;
 
                 case "2":
-                    Console.WriteLine("\nEnter coordinates for deployment: ");
+                    if(plateau == null)
+                    {
+                        Console.WriteLine($"Please choose the plateau for deployment.{Environment.NewLine}");
+                        SetPlateau();
+                    }
+                    Console.WriteLine("\nEnter coordinates for deployment (eg: 5 4 N): ");
                     var coordinateString = Console.ReadLine();
                     var splitCoordinates = coordinateString?.Split(' ');
-                    DeployRover(Convert.ToInt32(splitCoordinates[0]), 
-                        Convert.ToInt32(splitCoordinates[1]), splitCoordinates[2].FirstOrDefault());
+                    var x_pos = Utilities.ConvertUserInputNumber(splitCoordinates[0]);
+                    var y_pos = Utilities.ConvertUserInputNumber(splitCoordinates[1]);
+                    if (!plateau.IsCoordinatesWithinBounds(x_pos, y_pos))
+                    {
+                        Console.WriteLine($"{Environment.NewLine}Mayday! Rover has missed the plateau and crashed!");
+                        Console.ReadKey();
+                        break;
+                    }
+                    
+                    DeployRover(x_pos, y_pos, splitCoordinates[2].FirstOrDefault());
                     break;
 
                 case "3":
-                    Console.WriteLine($"Choose vehicle to be moved: {Environment.NewLine}");
+                    if(rovers.Count()==0)
+                    {
+                        Console.WriteLine("No active rovers on the surface");
+                        Console.ReadKey();
+                        break;
+                    }
+                    Console.WriteLine($"Active rovers on the surface: {Environment.NewLine}");
                     PrintExplorers();
                     Console.WriteLine($"{Environment.NewLine}Choose vehicle to be moved: ");
                     var vehicleChoice = Console.ReadKey().KeyChar;
@@ -131,7 +151,8 @@ namespace MarsRover
         {
             var cardinalDirection = Utilities.Convert<CardinalPoint>(orientation.ToString());
             var coordinates = new Coordinate(x, y, cardinalDirection);
-            var rover = new Rover(rovers.Count()+1, coordinates, plateau);
+            var lastID = rovers.OrderByDescending(r => r.ID).FirstOrDefault()?.ID ?? 0;
+            var rover = new Rover(lastID + 1, coordinates, plateau);
             rovers.Add(rover);
             
         }
@@ -145,8 +166,15 @@ namespace MarsRover
             int i = 1;
             foreach(var rover in rovers)
             {
-                Console.WriteLine($"{i}. Rover{rover.ID} at {rover.GetCurrentPosition()}");
+                Console.WriteLine($"{i++}. Rover{rover.ID} at {rover.GetCurrentPosition()}");
             }
+        }
+
+        private void SetPlateau()
+        {
+            PrintPlateauMenu();
+            var plateauChoice = Console.ReadLine();
+            ChoosePlateauMenuItem(plateauChoice);
         }
     }
 }

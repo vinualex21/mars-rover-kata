@@ -12,13 +12,13 @@ namespace MarsRover.Models
         private Coordinate Position;
         public int ID { get; set; }
 
-        private IPlateau Plateau;
+        private IPlateau plateau;
 
         public Rover(int id, Coordinate position, IPlateau plateau)
         {
             ID = id;
             Position = position;
-            Plateau = plateau;
+            this.plateau = plateau;
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace MarsRover.Models
                                 Position.X--;
                                 break;
                         }
-                        if(!Plateau.IsCoordinatesWithinBounds(Position.X, Position.Y))
+                        if(!plateau.IsCoordinatesWithinBounds(Position.X, Position.Y))
                         {
                             return -1;
                         }
