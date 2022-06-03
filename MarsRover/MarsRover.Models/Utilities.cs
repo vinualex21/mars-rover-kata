@@ -9,6 +9,13 @@ namespace MarsRover.Models
 {
     public static class Utilities
     {
+        /// <summary>
+        /// Converts the input to type T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static T Convert<T>(string input)
         {
             try
@@ -29,7 +36,17 @@ namespace MarsRover.Models
             }
         }
 
-        public static void ValidateUserInputNumber(string input, int? lowerLimit = null, int? UpperLimit = null)
+        /// <summary>
+        /// Validates the user input is a number and is within the range if provided.
+        /// </summary>
+        /// <param name="input">user input</param>
+        /// <param name="lowerLimit">lower limit of the range expected</param>
+        /// <param name="UpperLimit">upper limit of the range expected</param>
+        /// <returns>the integer number</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public static int ConvertUserInputNumber(string input, int? lowerLimit = null, int? UpperLimit = null)
         {
             if(string.IsNullOrEmpty(input))
             {
@@ -41,6 +58,7 @@ namespace MarsRover.Models
                 {
                     throw new ArgumentOutOfRangeException("Input out of range. Please enter a valid input.");
                 }
+                return result;
             }
             else
             {

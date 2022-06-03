@@ -18,7 +18,7 @@ namespace MarsRover
         public MissionManager()
         {
             rovers = new List<Rover>();
-            plateau = new RectangularPlateau(0,0);
+            
         }
 
         /// <summary>
@@ -26,12 +26,22 @@ namespace MarsRover
         /// </summary>
         public void PrintMainMenu()
         {
-            Console.WriteLine("MENU");
+            Console.Clear();
+            Console.WriteLine($"MENU {Environment.NewLine}");
             Console.WriteLine("1. Select plateau");
             Console.WriteLine("2. Deploy vehicle");
             Console.WriteLine("3. Move vehicle");
-            Console.WriteLine("Esc. Exit");
-            Console.Write("\nSelect Option: ");
+            Console.WriteLine("Q. Quit");
+            Console.Write($"{Environment.NewLine}Select Option: ");
+
+        }
+
+        public void PrintPlateauMenu()
+        {
+            Console.WriteLine($"PLATEAU TYPES {Environment.NewLine}");
+            Console.WriteLine("1. Rectangular plateau");
+            Console.WriteLine("2. Circular plateau");
+            Console.Write($"{Environment.NewLine}Select plateau: ");
 
         }
 
@@ -39,12 +49,18 @@ namespace MarsRover
         /// Executes the operation requestion by the user
         /// </summary>
         /// <param name="option">the chosen menu item</param>
-        public void ChooseMainMenuItem(char option)
+        public void ChooseMainMenuItem(string option)
         {
             Console.Clear();
             switch (option)
             {
-                case '2':
+                case "1":
+                    PrintPlateauMenu();
+                    var plateauChoice = Console.ReadLine();
+                    ChoosePlateauMenuItem(plateauChoice);
+                    break;
+
+                case "2":
                     Console.WriteLine("\nEnter coordinates for deployment: ");
                     var coordinateString = Console.ReadLine();
                     var splitCoordinates = coordinateString?.Split(' ');
@@ -52,20 +68,55 @@ namespace MarsRover
                         Convert.ToInt32(splitCoordinates[1]), splitCoordinates[2].FirstOrDefault());
                     break;
 
-                case '3':
+                case "3":
                     Console.WriteLine($"Choose vehicle to be moved: {Environment.NewLine}");
                     PrintExplorers();
                     Console.WriteLine($"{Environment.NewLine}Choose vehicle to be moved: ");
                     var vehicleChoice = Console.ReadKey().KeyChar;
-                    Utilities.ValidateUserInputNumber(vehicleChoice.ToString());
-                    var index = int.Parse(vehicleChoice.ToString()) - 1;
-                    var selectedRover = rovers.ElementAtOrDefault(index);
+                    var userChoice = Utilities.ConvertUserInputNumber(vehicleChoice.ToString(), 1, rovers.Count());
+                    var selectedRover = rovers.ElementAtOrDefault(userChoice - 1);
                     Console.WriteLine($"{Environment.NewLine}Enter instructions to move the vehicle: ");
                     var instructions = Console.ReadLine();
-                    selectedRover.MoveRover(instructions);
-                    Console.WriteLine($"{Environment.NewLine}Rover{selectedRover.ID} is now at {selectedRover.GetCurrentPosition()}");
+                    var distanceMoved = selectedRover.MoveRover(instructions);
+                    if (distanceMoved == -1)
+                    {
+                        Console.WriteLine($"{Environment.NewLine}Mayday!");
+                        Console.WriteLine($"{Environment.NewLine}Rover{selectedRover.ID} has gone off the surface. Rover lost.");
+                        rovers.RemoveAll(r => r.ID == selectedRover.ID); 
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{Environment.NewLine}Rover{selectedRover.ID} is now at {selectedRover.GetCurrentPosition()}");
+                    }
                     break;
 
+            }
+        }
+
+        public void ChoosePlateauMenuItem(string plateauChoice)
+        {
+            var choice = Utilities.ConvertUserInputNumber(plateauChoice, 1, 2);
+            switch(choice)
+            {
+                case 1:
+                    Console.WriteLine("Enter length of plateau: ");
+                    var userLength = Console.ReadLine();
+                    var length = Utilities.ConvertUserInputNumber(userLength);
+
+                    Console.WriteLine("Enter width of plateau: ");
+                    var userWidth = Console.ReadLine();
+                    var width = Utilities.ConvertUserInputNumber(userWidth);
+
+                    plateau = new RectangularPlateau(length, width);
+                    break;
+
+                case 2:
+                    Console.WriteLine("Enter radius of plateau: ");
+                    var userRadius = Console.ReadLine();
+                    var radius = Utilities.ConvertUserInputNumber(userRadius);
+
+                    plateau = new CircularPlateau(radius);
+                    break;
             }
         }
 

@@ -2,12 +2,13 @@
 using MarsRover;
 
 Console.WriteLine("Melody Mars Mission\n");
-ConsoleKeyInfo key;
+string key;
 MissionManager mission = new MissionManager();
 do
 {
     mission.PrintMainMenu();
-    key = Console.ReadKey();
-    mission.ChooseMainMenuItem(key.KeyChar);
+    key = Console.ReadLine();
+    mission.ChooseMainMenuItem(key);
 
-} while (key.Key != ConsoleKey.Escape);
+} while (key.ToLower() != "q");
+//while (key.Key != ConsoleKey.Escape);
