@@ -1,4 +1,5 @@
-﻿using MarsRover.Models.Interfaces;
+﻿using MarsRover.Models.enums;
+using MarsRover.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +12,19 @@ namespace MarsRover.Models
     {
         private Coordinate Position;
         public int ID { get; set; }
+        public string Name { get; private set; }
 
-        private IPlateau plateau;
+        public VehicleStatus Staus { get; set; }
+
+        public IPlateau Plateau { get; private set; }
 
         public Rover(int id, Coordinate position, IPlateau plateau)
         {
             ID = id;
+            Name = "Rover" + ID.ToString();
             Position = position;
-            this.plateau = plateau;
+            Staus = VehicleStatus.Active;
+            Plateau = plateau;
         }
 
         /// <summary>
@@ -35,7 +41,7 @@ namespace MarsRover.Models
         /// </summary>
         /// <param name="instructions">L: turn left, R: turn right, M: move forward one unit</param>
         /// <returns>The distance travelled</returns>
-        public double MoveRover(string instructions)
+        public double MoveRover(string instructions, List<Rover> rovers)
         {
             //current position
             int x1 = Position.X;
@@ -67,7 +73,7 @@ namespace MarsRover.Models
                                 Position.X--;
                                 break;
                         }
-                        if(!plateau.IsCoordinatesWithinBounds(Position.X, Position.Y))
+                        if(!CheckRoverStatus(Position, rovers))
                         {
                             return -1;
                         }
@@ -80,5 +86,33 @@ namespace MarsRover.Models
             return distance;
         }
 
+        /// <summary>
+        /// Checks if the rover has crashed with an obstacle
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="rovers"></param>
+        /// <returns>true, if active; false, otherwise</returns>
+        private bool CheckRoverStatus(Coordinate position, List<Rover> rovers)
+        {
+            var stationaryRover = rovers.Where(r => r.ID != this.ID && r.Position.
+            IsSamePosition(position)).SingleOrDefault();
+            if (stationaryRover != null)
+            {
+                this.Staus = VehicleStatus.Crashed;
+                rovers.RemoveAll(r => r.ID == this.ID || r.ID == stationaryRover.ID);
+                Console.WriteLine($"{this.Name} collided with {stationaryRover.Name} at {stationaryRover.Position.X} {stationaryRover.Position.Y}. {this.Name} and {stationaryRover.Name} lost.");
+                return false;
+            }
+            if (!Plateau.IsCoordinatesWithinBounds(Position.X, Position.Y))
+            {
+                this.Staus = VehicleStatus.OffCourse;
+                Console.WriteLine($"{Environment.NewLine}Mayday!");
+                Console.WriteLine($"{Environment.NewLine}Rover{this.ID} has gone off the surface. Rover lost.");
+                rovers.RemoveAll(r => r.ID == this.ID);
+                return false;
+            }
+
+            return true;
+        }
     }
 }

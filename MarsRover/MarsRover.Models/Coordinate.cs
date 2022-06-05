@@ -18,5 +18,11 @@ namespace MarsRover.Models
             Y = y;
             Orientation = orientation;
         }
+
+        public bool IsSamePosition(Coordinate c)
+        {
+            return X == c.X && Y == c.Y;
+        }
+
     }
 }

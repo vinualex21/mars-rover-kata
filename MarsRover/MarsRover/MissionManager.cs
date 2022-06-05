@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MarsRover.Models.enums;
 
 namespace MarsRover
 {
@@ -72,6 +73,7 @@ namespace MarsRover
                     var splitCoordinates = coordinateString?.Split(' ');
                     var x_pos = Utilities.ConvertUserInputNumber(splitCoordinates[0]);
                     var y_pos = Utilities.ConvertUserInputNumber(splitCoordinates[1]);
+                    
                     if (!plateau.IsCoordinatesWithinBounds(x_pos, y_pos))
                     {
                         Console.WriteLine($"{Environment.NewLine}Mayday! Rover has missed the plateau and crashed!");
@@ -97,14 +99,8 @@ namespace MarsRover
                     var selectedRover = rovers.ElementAtOrDefault(userChoice - 1);
                     Console.WriteLine($"{Environment.NewLine}Enter instructions to move the vehicle: ");
                     var instructions = Console.ReadLine();
-                    var distanceMoved = selectedRover.MoveRover(instructions);
-                    if (distanceMoved == -1)
-                    {
-                        Console.WriteLine($"{Environment.NewLine}Mayday!");
-                        Console.WriteLine($"{Environment.NewLine}Rover{selectedRover.ID} has gone off the surface. Rover lost.");
-                        rovers.RemoveAll(r => r.ID == selectedRover.ID); 
-                    }
-                    else
+                    var distanceMoved = selectedRover.MoveRover(instructions, rovers);
+                    if (selectedRover.Staus == VehicleStatus.Active)
                     {
                         Console.WriteLine($"{Environment.NewLine}Rover{selectedRover.ID} is now at {selectedRover.GetCurrentPosition()}");
                     }
@@ -149,11 +145,13 @@ namespace MarsRover
         /// <param name="orientation">cardinal direction</param>
         public void DeployRover(int x, int y, char orientation)
         {
+
             var cardinalDirection = Utilities.Convert<CardinalPoint>(orientation.ToString());
             var coordinates = new Coordinate(x, y, cardinalDirection);
             var lastID = rovers.OrderByDescending(r => r.ID).FirstOrDefault()?.ID ?? 0;
             var rover = new Rover(lastID + 1, coordinates, plateau);
             rovers.Add(rover);
+            
             
         }
 

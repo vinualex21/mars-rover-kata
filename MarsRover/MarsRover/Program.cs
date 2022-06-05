@@ -11,4 +11,3 @@ do
     mission.ChooseMainMenuItem(key);
 
 } while (key.ToLower() != "q");
-//while (key.Key != ConsoleKey.Escape);
