@@ -10,7 +10,7 @@ namespace MarsRover.Models
 {
     public class Rover : IExplorer
     {
-        private Coordinate Position;
+        private Coordinates Position;
         public int ID { get; set; }
         public string Name { get; private set; }
 
@@ -18,7 +18,7 @@ namespace MarsRover.Models
 
         public IPlateau Plateau { get; private set; }
 
-        public Rover(int id, Coordinate position, IPlateau plateau)
+        public Rover(int id, Coordinates position, IPlateau plateau)
         {
             ID = id;
             Name = "Rover" + ID.ToString();
@@ -92,7 +92,7 @@ namespace MarsRover.Models
         /// <param name="position"></param>
         /// <param name="rovers"></param>
         /// <returns>true, if active; false, otherwise</returns>
-        private bool CheckRoverStatus(Coordinate position, List<Rover> rovers)
+        private bool CheckRoverStatus(Coordinates position, List<Rover> rovers)
         {
             var stationaryRover = rovers.Where(r => r.ID != this.ID && r.Position.
             IsSamePosition(position)).SingleOrDefault();

@@ -16,24 +16,19 @@ namespace MarsRover.Models
         /// <param name="input"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static T Convert<T>(string input)
+        public static bool TryConvert<T>(string input, out T result)
         {
-            try
+            if (string.IsNullOrEmpty(input))
             {
-                if (string.IsNullOrEmpty(input))
-                {
-                    throw new ArgumentException("Argument null or empty");
-                }
-                if (Enum.TryParse(typeof(T), input, out object result))
-                {
-                    return (T)result;
-                }
-                return default(T);
+                throw new ArgumentException("Argument null or empty");
             }
-            catch (NotSupportedException)
+            if (Enum.TryParse(typeof(T), input, out object convertedValue))
             {
-                return default(T);
+                result = (T)convertedValue;
+                return true;
             }
+            result = default(T);
+            return false;
         }
 
         /// <summary>
@@ -46,24 +41,45 @@ namespace MarsRover.Models
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public static int ConvertUserInputNumber(string input, int? lowerLimit = null, int? UpperLimit = null)
+        public static bool TryConvertUserInputNumber(string input, out int result, int? lowerLimit = null, int? UpperLimit = null)
         {
             if(string.IsNullOrEmpty(input))
             {
-                throw new ArgumentNullException(paramName: "input", message: "No input received. Please enter a valid input.");
+                Console.WriteLine("No input received. Please enter a valid input.");
+                Console.ReadKey();
+                result = 0;
+                return false;
             }
-            if(int.TryParse(input, out int result))
+            else if(int.TryParse(input, out int output))
             {
-                if((result < (lowerLimit?? int.MinValue)) || (result > (UpperLimit ?? int.MaxValue)))
+                if((output < (lowerLimit?? int.MinValue)) || (output > (UpperLimit ?? int.MaxValue)))
                 {
-                    throw new ArgumentOutOfRangeException("Input out of range. Please enter a valid input.");
+                    Console.WriteLine("Input out of range. Please enter a valid input.");
+                    Console.ReadKey();
+                    result = 0;
+                    return false;
                 }
-                return result;
+                result = output;
+                return true;
             }
             else
             {
-                throw new ArgumentException("Invalid input. Please enter a valid input.");
+                Console.WriteLine("Invalid input. Please enter a valid input.");
+                Console.ReadKey();
+                result = 0;
+                return false;
             }
+        }
+
+        public static void PrintLoadingMessage(string message, int interval, int count)
+        {
+            Console.Write(message);
+            for(int i = 0; i < count; i++)
+            {
+                Thread.Sleep(interval);
+                Console.Write(".");
+            }
+            Console.WriteLine();
         }
     }
 }

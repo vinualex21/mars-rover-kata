@@ -66,22 +66,28 @@ namespace MarsRover
                     if(plateau == null)
                     {
                         Console.WriteLine($"Please choose the plateau for deployment.{Environment.NewLine}");
-                        SetPlateau();
-                    }
-                    Console.WriteLine("\nEnter coordinates for deployment (eg: 5 4 N): ");
-                    var coordinateString = Console.ReadLine();
-                    var splitCoordinates = coordinateString?.Split(' ');
-                    var x_pos = Utilities.ConvertUserInputNumber(splitCoordinates[0]);
-                    var y_pos = Utilities.ConvertUserInputNumber(splitCoordinates[1]);
-                    
-                    if (!plateau.IsCoordinatesWithinBounds(x_pos, y_pos))
-                    {
-                        Console.WriteLine($"{Environment.NewLine}Mayday! Rover has missed the plateau and crashed!");
                         Console.ReadKey();
                         break;
                     }
-                    
-                    DeployRover(x_pos, y_pos, splitCoordinates[2].FirstOrDefault());
+                    Console.WriteLine($"{Environment.NewLine}Enter coordinates for deployment (eg: 5 4 N): ");
+                    var coordinateString = Console.ReadLine();
+                    var coordinates = Coordinates.GetCoordinatesFromString(coordinateString, plateau.GetType());
+
+                    if (coordinates != null)
+                    {
+                        Utilities.PrintLoadingMessage("Deploying rover", 1000, 5);
+
+                        if (!plateau.IsCoordinatesWithinBounds(coordinates.X, coordinates.Y))
+                        {
+                            Console.WriteLine($"{Environment.NewLine}Mayday! Rover has missed the plateau and crashed!");
+                            Console.ReadKey();
+                            break;
+                        }
+
+                        var rover = DeployRover(coordinates);
+                        Console.WriteLine($"{rover.Name} deployed at {rover.GetCurrentPosition()}");
+                        Console.ReadKey();
+                    }
                     break;
 
                 case "3":
@@ -94,15 +100,17 @@ namespace MarsRover
                     Console.WriteLine($"Active rovers on the surface: {Environment.NewLine}");
                     PrintExplorers();
                     Console.WriteLine($"{Environment.NewLine}Choose vehicle to be moved: ");
-                    var vehicleChoice = Console.ReadKey().KeyChar;
-                    var userChoice = Utilities.ConvertUserInputNumber(vehicleChoice.ToString(), 1, rovers.Count());
-                    var selectedRover = rovers.ElementAtOrDefault(userChoice - 1);
-                    Console.WriteLine($"{Environment.NewLine}Enter instructions to move the vehicle: ");
-                    var instructions = Console.ReadLine();
-                    var distanceMoved = selectedRover.MoveRover(instructions, rovers);
-                    if (selectedRover.Staus == VehicleStatus.Active)
+                    var vehicleChoice = Console.ReadLine();
+                    if (Utilities.TryConvertUserInputNumber(vehicleChoice, out int userChoice, 1, rovers.Count()))
                     {
-                        Console.WriteLine($"{Environment.NewLine}Rover{selectedRover.ID} is now at {selectedRover.GetCurrentPosition()}");
+                        var selectedRover = rovers.ElementAtOrDefault(userChoice - 1);
+                        Console.WriteLine($"{Environment.NewLine}Enter instructions to move the vehicle: ");
+                        var instructions = Console.ReadLine();
+                        var distanceMoved = selectedRover.MoveRover(instructions, rovers);
+                        if (selectedRover.Staus == VehicleStatus.Active)
+                        {
+                            Console.WriteLine($"{Environment.NewLine}{selectedRover.Name} is now at {selectedRover.GetCurrentPosition()}");
+                        }
                     }
                     break;
 
@@ -111,28 +119,35 @@ namespace MarsRover
 
         public void ChoosePlateauMenuItem(string plateauChoice)
         {
-            var choice = Utilities.ConvertUserInputNumber(plateauChoice, 1, 2);
-            switch(choice)
+            if (Utilities.TryConvertUserInputNumber(plateauChoice, out int convertedNumber, 1, 2))
             {
-                case 1:
-                    Console.WriteLine("Enter length of plateau: ");
-                    var userLength = Console.ReadLine();
-                    var length = Utilities.ConvertUserInputNumber(userLength);
+                switch (convertedNumber)
+                {
+                    case 1:
+                        Console.Write("Enter length of the plateau: ");
+                        var userLength = Console.ReadLine();
 
-                    Console.WriteLine("Enter width of plateau: ");
-                    var userWidth = Console.ReadLine();
-                    var width = Utilities.ConvertUserInputNumber(userWidth);
+                        Console.Write("Enter width of the plateau: ");
+                        var userWidth = Console.ReadLine();
 
-                    plateau = new RectangularPlateau(length, width);
-                    break;
+                        if(Utilities.TryConvertUserInputNumber(userLength, out int length) 
+                            && Utilities.TryConvertUserInputNumber(userWidth, out int width))
+                        {
+                            plateau = new RectangularPlateau(length, width);
+                        }
+                        
+                        break;
 
-                case 2:
-                    Console.WriteLine("Enter radius of plateau: ");
-                    var userRadius = Console.ReadLine();
-                    var radius = Utilities.ConvertUserInputNumber(userRadius);
-
-                    plateau = new CircularPlateau(radius);
-                    break;
+                    case 2:
+                        Console.WriteLine("Enter radius of the plateau: ");
+                        var userRadius = Console.ReadLine();
+                        if (Utilities.TryConvertUserInputNumber(userRadius, out int radius))
+                        {
+                            plateau = new CircularPlateau(radius);
+                        }
+                        
+                        break;
+                }
             }
         }
 
@@ -143,16 +158,12 @@ namespace MarsRover
         /// <param name="x">x-coordinate</param>
         /// <param name="y">y-coordinate</param>
         /// <param name="orientation">cardinal direction</param>
-        public void DeployRover(int x, int y, char orientation)
+        public Rover DeployRover(Coordinates coordinates)
         {
-
-            var cardinalDirection = Utilities.Convert<CardinalPoint>(orientation.ToString());
-            var coordinates = new Coordinate(x, y, cardinalDirection);
             var lastID = rovers.OrderByDescending(r => r.ID).FirstOrDefault()?.ID ?? 0;
             var rover = new Rover(lastID + 1, coordinates, plateau);
             rovers.Add(rover);
-            
-            
+            return rover;
         }
 
         private void PrintExplorers()

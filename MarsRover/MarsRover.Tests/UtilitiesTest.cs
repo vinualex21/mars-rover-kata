@@ -7,79 +7,61 @@ namespace MarsRover.Tests
 {
     public class UtilitiesTest
     {
-        [Test]
-        public void ValidateUserInputNumber_GivenNull_ShouldThrowException()
-        {
-            Action invokingWithNullInput = () => Utilities.ConvertUserInputNumber(null);
+        private int convertedNumber;
 
-            invokingWithNullInput.Should()
-                .Throw<ArgumentNullException>("No input received. Please enter a valid input.");
+        [Test]
+        public void ValidateUserInputNumber_GivenNull_ShouldReturnFalse()
+        {
+            Utilities.TryConvertUserInputNumber(null, out convertedNumber).Should().BeFalse();
         }
 
         [Test]
-        public void ValidateUserInputNumber_GivenEmptyInput_ShouldThrowException()
+        public void ValidateUserInputNumber_GivenEmptyInput_ShouldReturnFalse()
         {
-            Action invokingWithEmptyInput = () => Utilities.ConvertUserInputNumber("");
-
-            invokingWithEmptyInput.Should()
-                .Throw<ArgumentNullException>("No input received. Please enter a valid input.");
+            Utilities.TryConvertUserInputNumber("", out convertedNumber).Should().BeFalse();
         }
 
         [Test]
-        public void ValidateUserInputNumber_GivenAnAlphabet_ShouldThrowException()
+        public void ValidateUserInputNumber_GivenAnAlphabet_ShouldReturnFalse()
         {
-            Action invokingWithAlphabetInput = () => Utilities.ConvertUserInputNumber("D");
-
-            invokingWithAlphabetInput.Should()
-                .Throw<ArgumentException>("Invalid input. Please enter a valid input.");
+            Utilities.TryConvertUserInputNumber("D", out convertedNumber).Should().BeFalse();
         }
 
         [Test]
-        public void ValidateUserInputNumber_GivenASpecialCharacter_ShouldThrowException()
+        public void ValidateUserInputNumber_GivenASpecialCharacter_ShouldReturnFalse()
         {
-            Action invokingWithSpecialCharacterInput = () => Utilities.ConvertUserInputNumber("%");
-
-            invokingWithSpecialCharacterInput.Should()
-                .Throw<ArgumentException>("Invalid input. Please enter a valid input.");
+            Utilities.TryConvertUserInputNumber("%", out convertedNumber).Should().BeFalse();
         }
 
         [Test]
-        public void ValidateUserInputNumber_GivenValidNumber_ShouldNotThrowException()
+        public void ValidateUserInputNumber_GivenValidNumber_ShouldReturnTrueAndOutputValue()
         {
-            Action invokingWithValidNumberInput = () => Utilities.ConvertUserInputNumber("5");
-            invokingWithValidNumberInput.Should()
-                .NotThrow<Exception>();
+            Utilities.TryConvertUserInputNumber("5", out convertedNumber).Should().BeTrue();
+            convertedNumber.Should().Be(5);
 
 
-            invokingWithValidNumberInput = () => Utilities.ConvertUserInputNumber("-10");
-            invokingWithValidNumberInput.Should()
-                .NotThrow<Exception>();
+            Utilities.TryConvertUserInputNumber("-11", out convertedNumber).Should().BeTrue();
+            convertedNumber.Should().Be(-11);
         }
 
         [Test]
-        public void ValidateUserInputNumber_GivenNumberOutOfGivenRange_ShouldThrowException()
+        public void ValidateUserInputNumber_GivenNumberOutOfGivenRange_ShouldReturnFalse()
         {
-            Action invokingWithOutOfRangeInput = () => Utilities.ConvertUserInputNumber("-3",0);
-            invokingWithOutOfRangeInput.Should()
-                .Throw<ArgumentOutOfRangeException>("Input out of range. Please enter a valid input.");
+            Utilities.TryConvertUserInputNumber("-3", out convertedNumber, 0).Should().BeFalse();
 
 
-            invokingWithOutOfRangeInput = () => Utilities.ConvertUserInputNumber("10", 0, 8);
-            invokingWithOutOfRangeInput.Should()
-                .Throw<ArgumentOutOfRangeException>("Input out of range. Please enter a valid input.");
+            Utilities.TryConvertUserInputNumber("10", out convertedNumber, null, 8).Should().BeFalse();
         }
 
         [Test]
-        public void ValidateUserInputNumber_GivenNumberInRange_ShouldNotThrowException()
+        public void ValidateUserInputNumber_GivenNumberInRange_ShouldReturnTrueAndOutputValue()
         {
-            Action invokingWithInputInRange = () => Utilities.ConvertUserInputNumber("4", 0);
-            invokingWithInputInRange.Should()
-                .NotThrow<ArgumentOutOfRangeException>();
+            Utilities.TryConvertUserInputNumber("4", out convertedNumber, 0).Should().BeTrue();
+            convertedNumber.Should().Be(4);
 
 
-            invokingWithInputInRange = () => Utilities.ConvertUserInputNumber("3500", 0, 3500);
-            invokingWithInputInRange.Should()
-                .NotThrow<ArgumentOutOfRangeException>();
+            Utilities.TryConvertUserInputNumber("3500", out convertedNumber, 0, 3500).Should().BeTrue();
+            convertedNumber.Should().Be(3500);
         }
     }
 }
