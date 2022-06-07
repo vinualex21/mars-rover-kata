@@ -85,7 +85,10 @@ namespace MarsRover
                         }
 
                         var rover = DeployRover(coordinates);
-                        Console.WriteLine($"{rover.Name} deployed at {rover.GetCurrentPosition()}");
+                        if (rover != null)
+                        {
+                            Console.WriteLine($"{rover.Name} deployed at {rover.GetCurrentPosition()}");
+                        }
                         Console.ReadKey();
                     }
                     break;
@@ -111,6 +114,14 @@ namespace MarsRover
                         {
                             Console.WriteLine($"{Environment.NewLine}{selectedRover.Name} is now at {selectedRover.GetCurrentPosition()}");
                         }
+                    }
+                    break;
+
+                default:
+                    if(option.ToLower()!="q")
+                    {
+                        Console.WriteLine("Invalid option. PLease choose a valid menu item.");
+                        Console.ReadKey();
                     }
                     break;
 
@@ -163,7 +174,7 @@ namespace MarsRover
             var lastID = rovers.OrderByDescending(r => r.ID).FirstOrDefault()?.ID ?? 0;
             var rover = new Rover(lastID + 1, coordinates, plateau);
             rovers.Add(rover);
-            return rover;
+            return rover.CheckRoverStatus(rovers) ? rover : null;
         }
 
         private void PrintExplorers()

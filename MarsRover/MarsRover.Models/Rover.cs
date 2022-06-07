@@ -73,7 +73,7 @@ namespace MarsRover.Models
                                 Position.X--;
                                 break;
                         }
-                        if(!CheckRoverStatus(Position, rovers))
+                        if(!CheckRoverStatus(rovers))
                         {
                             return -1;
                         }
@@ -87,15 +87,14 @@ namespace MarsRover.Models
         }
 
         /// <summary>
-        /// Checks if the rover has crashed with an obstacle
+        /// Checks if the rover has crashed with other rovers
         /// </summary>
-        /// <param name="position"></param>
         /// <param name="rovers"></param>
         /// <returns>true, if active; false, otherwise</returns>
-        private bool CheckRoverStatus(Coordinates position, List<Rover> rovers)
+        public bool CheckRoverStatus(List<Rover> rovers)
         {
-            var stationaryRover = rovers.Where(r => r.ID != this.ID && r.Position.
-            IsSamePosition(position)).SingleOrDefault();
+            var stationaryRover = rovers.Where(r => r.ID != this.ID && r.Position
+                                                .IsSamePosition(this.Position)).SingleOrDefault();
             if (stationaryRover != null)
             {
                 this.Staus = VehicleStatus.Crashed;
@@ -103,7 +102,7 @@ namespace MarsRover.Models
                 Console.WriteLine($"{this.Name} collided with {stationaryRover.Name} at {stationaryRover.Position.X} {stationaryRover.Position.Y}. {this.Name} and {stationaryRover.Name} lost.");
                 return false;
             }
-            if (!Plateau.IsCoordinatesWithinBounds(Position.X, Position.Y))
+            if (!Plateau.IsCoordinatesWithinBounds(this.Position.X, this.Position.Y))
             {
                 this.Staus = VehicleStatus.OffCourse;
                 Console.WriteLine($"{Environment.NewLine}Mayday!");
