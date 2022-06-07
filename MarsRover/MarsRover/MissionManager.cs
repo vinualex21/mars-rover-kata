@@ -75,7 +75,7 @@ namespace MarsRover
 
                     if (coordinates != null)
                     {
-                        Utilities.PrintLoadingMessage("Deploying rover", 1000, 5);
+                        Utilities.PrintLoadingMessage("Deploying rover", 800, 5);
 
                         if (!plateau.IsCoordinatesWithinBounds(coordinates.X, coordinates.Y))
                         {
@@ -89,8 +89,9 @@ namespace MarsRover
                         {
                             Console.WriteLine($"{rover.Name} deployed at {rover.GetCurrentPosition()}");
                         }
-                        Console.ReadKey();
+                        
                     }
+                    Console.ReadKey();
                     break;
 
                 case "3":
@@ -115,6 +116,7 @@ namespace MarsRover
                             Console.WriteLine($"{Environment.NewLine}{selectedRover.Name} is now at {selectedRover.GetCurrentPosition()}");
                         }
                     }
+                    Console.ReadKey();
                     break;
 
                 default:
@@ -145,8 +147,11 @@ namespace MarsRover
                             && Utilities.TryConvertUserInputNumber(userWidth, out int width))
                         {
                             plateau = new RectangularPlateau(length, width);
+                            Utilities.PrintLoadingMessage("Mapping the surface", 800, 3);
+                            Console.Write("Plateau mapped.");
                         }
                         
+
                         break;
 
                     case 2:
@@ -155,11 +160,14 @@ namespace MarsRover
                         if (Utilities.TryConvertUserInputNumber(userRadius, out int radius))
                         {
                             plateau = new CircularPlateau(radius);
+                            Utilities.PrintLoadingMessage("Mapping the surface", 800, 3);
+                            Console.Write("Plateau mapped.");
                         }
                         
                         break;
                 }
             }
+            Console.ReadKey();
         }
 
         /// <summary>

@@ -46,7 +46,6 @@ namespace MarsRover.Models
             if(string.IsNullOrEmpty(input))
             {
                 Console.WriteLine("No input received. Please enter a valid input.");
-                Console.ReadKey();
                 result = 0;
                 return false;
             }
@@ -55,7 +54,6 @@ namespace MarsRover.Models
                 if((output < (lowerLimit?? int.MinValue)) || (output > (UpperLimit ?? int.MaxValue)))
                 {
                     Console.WriteLine("Input out of range. Please enter a valid input.");
-                    Console.ReadKey();
                     result = 0;
                     return false;
                 }
@@ -65,7 +63,6 @@ namespace MarsRover.Models
             else
             {
                 Console.WriteLine("Invalid input. Please enter a valid input.");
-                Console.ReadKey();
                 result = 0;
                 return false;
             }

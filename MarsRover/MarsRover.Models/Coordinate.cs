@@ -38,7 +38,6 @@ namespace MarsRover.Models
             if(splitCoordinates.Count() != COORDINATE_PARTS_COUNT)
             {
                 Console.WriteLine("Invalid input format. Please enter coordinates in the specified format.");
-                Console.ReadKey();
                 return null;
             }
 
@@ -67,7 +66,6 @@ namespace MarsRover.Models
             else
             {
                 Console.WriteLine("Invalid Cardinal point. Please enter one of N, E, S or W.");
-                Console.ReadKey();
                 return null;
             }
             

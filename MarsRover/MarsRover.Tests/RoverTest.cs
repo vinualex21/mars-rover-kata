@@ -88,9 +88,53 @@ namespace MarsRover.Tests
 
         #endregion
 
-        #region DeployRover
+        #region CheckRoverStatus
 
-        
+        [Test]
+        public void CheckRoverStatus_GivenRoverInUnoccupiedCoordinates_ShouldReturnTrue()
+        {
+            //Arrange
+            var newRoverCoordinates = new Coordinates(3, 4, CardinalPoint.N);
+            var plateau = new RectangularPlateau(5, 5);
+            var rover = new Rover(3, newRoverCoordinates, plateau);
+
+            var rover1Coordinates = new Coordinates(1, 1, CardinalPoint.E);
+            var existingRover1 = new Rover(1, rover1Coordinates, plateau);
+
+            var rover2Coordinates = new Coordinates(4, 4, CardinalPoint.E);
+            var existingRover2 = new Rover(2, rover2Coordinates, plateau);
+
+            var existingRovers = new List<Rover> { existingRover1, existingRover2 };
+            
+            //Act
+            var status = rover.CheckRoverStatus(existingRovers);
+
+            //Assert
+            status.Should().BeTrue();
+        }
+
+        [Test]
+        public void CheckRoverStatus_GivenRoverInOccupiedCoordinates_ShouldReturnFalse()
+        {
+            //Arrange
+            var newRoverCoordinates = new Coordinates(1, 1, CardinalPoint.N);
+            var plateau = new RectangularPlateau(5, 5);
+            var rover = new Rover(3, newRoverCoordinates, plateau);
+
+            var rover1Coordinates = new Coordinates(1, 1, CardinalPoint.E);
+            var existingRover1 = new Rover(1, rover1Coordinates, plateau);
+
+            var rover2Coordinates = new Coordinates(4, 4, CardinalPoint.E);
+            var existingRover2 = new Rover(2, rover2Coordinates, plateau);
+
+            var existingRovers = new List<Rover> { existingRover1, existingRover2 };
+
+            //Act
+            var status = rover.CheckRoverStatus(existingRovers);
+
+            //Assert
+            status.Should().BeFalse();
+        }
 
         #endregion
     }
